@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Translations
         if(label === 'name') label = 'الاسم';
         if(label === 'date') label = 'التاريخ';
-        if(label === 'event_name') label = 'اللقب مثلا أخي الفاصل أختي الفاضلة';
+        if(label === 'event_name') label = 'اللقب مثلا أخي الفاضل أختي الفاضلة';
         if(label === 'custom_text') label = 'اسم المدعو';
         
         const wrapper = document.createElement('div');
