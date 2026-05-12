@@ -189,6 +189,6 @@ if (empty($_SESSION['authenticated'])) {
     </div>
 </div>
 
-<script src="js/editor.js"></script>
+<script src="js/editor.js?v=<?= filemtime(__DIR__ . '/js/editor.js') ?>"></script>
 </body>
 </html>
