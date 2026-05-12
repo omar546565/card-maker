@@ -123,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentTemplateId === id) {
                     // Reset editor if the active template is deleted
                     currentTemplateId = null;
-                    document.getElementById('template-name').value = '';
+                    const nameEl = document.getElementById('template-name');
+                    if (nameEl) nameEl.value = '';
                 }
                 loadSavedTemplates();
             } else {
@@ -144,7 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 const tpl = data.data;
                 currentTemplateId = tpl.id;
-                document.getElementById('template-name').value = tpl.name;
+                const nameEl2 = document.getElementById('template-name');
+                if (nameEl2) nameEl2.value = tpl.name;
                 
                 currentImage = tpl.bg_image;
                 canvasBg.src = currentImage;
@@ -500,8 +502,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Save Template
-    saveBtn.addEventListener('click', async () => {
-        const name = document.getElementById('template-name').value;
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        const name = document.getElementById('template-name')?.value;
         if (!name) return alert('الرجاء إدخال اسم القالب');
         if (!currentImage) return alert('الرجاء رفع صورة');
 
@@ -524,13 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const link = window.location.origin + '/view.php?id=' + data.id;
             alert('تم الحفظ بنجاح! رابط المشاركة:\n' + link);
             // Update list if it's open
-            if (!savedTemplatesList.classList.contains('hidden')) {
+            if (savedTemplatesList && !savedTemplatesList.classList.contains('hidden')) {
                 loadSavedTemplates();
             }
         } else {
             alert('خطأ في الحفظ');
         }
-    });
+      });
+    } // end if(saveBtn)
 
     // Reset Database Logic
     const resetDbBtn = document.getElementById('reset-db-btn');
