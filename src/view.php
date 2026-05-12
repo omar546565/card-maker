@@ -115,22 +115,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const fontRes = await fetch('api.php?action=list_fonts');
             const fontData = await fontRes.json();
-            if (fontData.success) {
+            if (fontData.success && fontData.data.length > 0) {
+                let styleContent = '';
                 const fontPromises = fontData.data.map(async (font) => {
                     try {
                         const f = new FontFace(font.name, `url(${font.file_path})`);
-                        const loadedFace = await f.load();
-                        document.fonts.add(loadedFace);
-                        
-                        // Also inject as style for fallback
-                        const style = document.createElement('style');
-                        style.innerHTML = `@font-face { font-family: '${font.name}'; src: url('${font.file_path}'); }`;
-                        document.head.appendChild(style);
+                        await f.load();
+                        document.fonts.add(f);
+                        styleContent += `@font-face { font-family: '${font.name}'; src: url('${font.file_path}'); font-display: block; }\n`;
                     } catch (err) {
                         console.error(`Error loading font ${font.name}:`, err);
                     }
                 });
                 await Promise.all(fontPromises);
+                
+                const style = document.createElement('style');
+                style.id = 'custom-fonts-style';
+                style.innerHTML = styleContent;
+                document.head.appendChild(style);
+                
                 await document.fonts.ready;
             }
         } catch (e) {
@@ -221,8 +224,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('generate-btn').innerText = 'جاري التوليد...';
         
         try {
-            // Wait for images to be fully ready
+            // Wait for images and fonts to settle in the DOM
             const resultContainer = document.getElementById('result-container');
+            await new Promise(r => setTimeout(r, 500)); // 500ms delay for safety
             
             // We use html-to-image on the hidden full-size container
             const dataUrl = await htmlToImage.toPng(resultContainer, {
