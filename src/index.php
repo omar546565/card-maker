@@ -1,3 +1,49 @@
+<?php
+session_start();
+
+// كلمة المرور الافتراضية (يمكنك تغييرها)
+$password = 'itkan@2026';
+
+if (isset($_POST['password']) && $_POST['password'] === $password) {
+    $_SESSION['authenticated'] = true;
+}
+
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
+
+if (empty($_SESSION['authenticated'])) {
+?>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - محرر البطاقات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Cairo', sans-serif; }</style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-96 border-t-4 border-indigo-600">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">تسجيل الدخول للمحرر</h2>
+        <?php if(isset($_POST['password'])) echo '<p class="text-red-500 mb-4 text-sm text-center font-semibold">كلمة المرور غير صحيحة</p>'; ?>
+        <form method="POST">
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">كلمة المرور</label>
+                <input type="password" name="password" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required placeholder="أدخل كلمة المرور...">
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition duration-200">دخول</button>
+        </form>
+    </div>
+</body>
+</html>
+<?php
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -31,7 +77,10 @@
 <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <div class="w-80 bg-white shadow-lg p-6 overflow-y-auto flex flex-col gap-6">
-        <h1 class="text-2xl font-bold text-indigo-600 border-b pb-4">محرر القوالب</h1>
+        <div class="flex justify-between items-center border-b pb-4">
+            <h1 class="text-2xl font-bold text-indigo-600">محرر القوالب</h1>
+            <a href="?logout=1" class="text-sm text-red-500 hover:text-red-700 font-bold px-2 py-1 bg-red-50 rounded">خروج</a>
+        </div>
         
         <div class="border-b pb-4">
             <button id="toggle-saved-btn" class="w-full bg-gray-50 text-indigo-700 font-semibold py-2 rounded border border-indigo-200 hover:bg-indigo-50 transition">عرض البطاقات المحفوظة ⬇️</button>
