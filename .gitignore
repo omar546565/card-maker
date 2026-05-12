@@ -1,0 +1,4 @@
+src/db/database.sqlite
+src/uploads/
+*.log
+.DS_Store
