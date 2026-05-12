@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             whatsappBtn.onclick = async () => {
                 const fbLink = "https://www.facebook.com/@ITKANDERNEGI";
                 const ytLink = "https://www.youtube.com/@ITKANDERNEGI";
-                const shareText = `اشترك لمتابعة البث المباشر \n\n على فيسبوك: ${fbLink}\n على يوتيوب: ${ytLink}`;
+                const shareText = `لضمان وصول إشعار البث المباشر للحفل \n\n اشترك بقناة اليوتيوب التابعة لمؤسسة إتقان: ${ytLink}\n أو صفحة الفيسبوك التابعة لمؤسسة إتقان: ${fbLink}`;
 
                 // Check if Web Share API is supported and can share files
                 if (navigator.share) {
