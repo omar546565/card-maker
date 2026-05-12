@@ -264,7 +264,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial load
-    loadFonts();
+    window.addEventListener('load', () => {
+        loadFonts();
+    });
 
     // Upload Background
     bgUpload.addEventListener('change', async (e) => {
