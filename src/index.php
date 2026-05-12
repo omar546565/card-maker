@@ -55,7 +55,7 @@ if (empty($_SESSION['authenticated'])) {
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
-        #canvas-wrapper { position: relative; display: inline-block;margin-top: 200px; }
+        #canvas-wrapper { position: relative; display: inline-block;margin-top: 500px; }
         #canvas-bg { display: block; max-width: 100%; height: auto; }
         .draggable-text {
             position: absolute;
