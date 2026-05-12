@@ -74,9 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Saved Templates
-    const savedTemplatesList = document.getElementById('saved-templates-list');
-
     async function loadSavedTemplates() {
+        if (!savedTemplatesList) return;
         try {
             const res = await fetch('api.php?action=list_templates');
             const data = await res.json();
@@ -302,43 +301,48 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFonts();
 
     // Upload Background
-    bgUpload.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    if (bgUpload) {
+        bgUpload.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const formData = new FormData();
-        formData.append('bg_image', file);
-        formData.append('action', 'upload');
+            const formData = new FormData();
+            formData.append('bg_image', file);
+            formData.append('action', 'upload');
 
-        const res = await fetch('api.php', { method: 'POST', body: formData });
-        const data = await res.json();
+            const res = await fetch('api.php', { method: 'POST', body: formData });
+            const data = await res.json();
 
-        if (data.success) {
-            currentImage = data.url;
-            currentTemplateId = null; // Reset to create new template
-            document.getElementById('template-name').value = '';
-            
-            // Clear existing fields when new image is uploaded
-            document.querySelectorAll('.draggable-text').forEach(el => el.remove());
-            fields = [];
-            fieldCounter = 0;
-            
-            // Set onload BEFORE src to avoid missing the event
-            canvasBg.onload = () => {
-                placeholderText.classList.add('hidden');
-                canvasWrapper.classList.remove('hidden');
-                fieldsSection.classList.remove('hidden');
-                fieldsSection.classList.add('flex');
-                saveBtn.classList.remove('hidden');
-            };
-            canvasBg.src = currentImage;
+            if (data.success) {
+                currentImage = data.url;
+                currentTemplateId = null; // Reset to create new template
+                const nameInp = document.getElementById('template-name');
+                if (nameInp) nameInp.value = '';
+                
+                // Clear existing fields when new image is uploaded
+                document.querySelectorAll('.draggable-text').forEach(el => el.remove());
+                fields = [];
+                fieldCounter = 0;
+                
+                // Set onload BEFORE src to avoid missing the event
+                if (canvasBg) {
+                    canvasBg.onload = () => {
+                        placeholderText?.classList.add('hidden');
+                        canvasWrapper?.classList.remove('hidden');
+                        fieldsSection?.classList.remove('hidden');
+                        fieldsSection?.classList.add('flex');
+                        saveBtn?.classList.remove('hidden');
+                    };
+                    canvasBg.src = currentImage;
+                }
 
-            // Show toast immediately after successful upload (guaranteed)
-            showToast('✅ تم الحفظ في الاستديو');
-        } else {
-            alert('فشل رفع الصورة');
-        }
-    });
+                // Show toast immediately after successful upload (guaranteed)
+                showToast('✅ تم الحفظ في الاستديو');
+            } else {
+                alert('فشل رفع الصورة');
+            }
+        });
+    }
 
     // Add Field
     addFieldBtn.addEventListener('click', () => {
