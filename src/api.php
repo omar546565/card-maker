@@ -126,6 +126,24 @@ if ($action === 'delete_template') {
     exit;
 }
 
+if ($action === 'reset_db') {
+    // Delete from DB
+    $pdo->exec("DELETE FROM templates");
+    $pdo->exec("DELETE FROM fonts");
+    
+    // Delete files (optional but recommended)
+    $uploadDir = __DIR__ . '/uploads/';
+    $fontDir = $uploadDir . 'fonts/';
+    
+    $files = array_merge(glob($uploadDir . "*.*"), glob($fontDir . "*.*"));
+    foreach($files as $file){
+        if(is_file($file)) unlink($file);
+    }
+    
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 if ($action === 'get_template') {
     $id = $_GET['id'] ?? '';
     $stmt = $pdo->prepare("SELECT * FROM templates WHERE id = ?");

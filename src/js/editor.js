@@ -523,4 +523,30 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('خطأ في الحفظ');
         }
     });
+
+    // Reset Database Logic
+    const resetDbBtn = document.getElementById('reset-db-btn');
+    if (resetDbBtn) {
+        resetDbBtn.addEventListener('click', async () => {
+            const confirm1 = confirm('⚠️ تنبيه: سيتم مسح كافة البطاقات والخطوط المرفوعة نهائياً. هل أنت متأكد؟');
+            if (!confirm1) return;
+            
+            const confirm2 = confirm('تأكيد نهائي: هل تريد حقاً تصفير قاعدة البيانات بالكامل؟ لا يمكن التراجع عن هذه الخطوة.');
+            if (!confirm2) return;
+
+            try {
+                const res = await fetch('api.php?action=reset_db');
+                const data = await res.json();
+                if (data.success) {
+                    alert('تم تصفير البيانات بنجاح. سيتم إعادة تحميل الصفحة.');
+                    window.location.reload();
+                } else {
+                    alert('فشل تصفير البيانات');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('حدث خطأ أثناء الاتصال بالسيرفر');
+            }
+        });
+    }
 });

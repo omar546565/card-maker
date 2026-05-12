@@ -171,6 +171,12 @@ if (empty($_SESSION['authenticated'])) {
             <input type="text" id="template-name" placeholder="مثال: دعوة زفاف" class="w-full border rounded p-2 mb-4">
             <button id="save-template-btn" class="w-full bg-green-600 text-white py-3 rounded-lg shadow-lg font-bold hover:bg-green-700 transition hidden">حفظ واستخراج الرابط</button>
         </div>
+
+        <div class="mt-8 pt-4 border-t border-red-100">
+            <button id="reset-db-btn" class="w-full text-red-400 hover:text-red-600 text-xs font-semibold py-2 transition flex items-center justify-center gap-2">
+                <span>⚠️</span> تصفير كافة البيانات
+            </button>
+        </div>
     </div>
 
     <!-- Canvas Area -->
