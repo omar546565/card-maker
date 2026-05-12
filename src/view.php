@@ -157,8 +157,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const wrapper = document.createElement('div');
         wrapper.innerHTML = `
             <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
-            <input type="text" data-var="${v}" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
+            <input type="text" data-var="${v}" placeholder="${label}..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
         `;
+        // Live preview on every keystroke
+        const input = wrapper.querySelector('input');
+        input.addEventListener('input', () => {
+            buildFields(document.getElementById('preview-fields-container'), false);
+        });
         form.appendChild(wrapper);
     });
 
@@ -177,9 +182,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const el = document.createElement('div');
             // get value from input
             const input = document.querySelector(`input[data-var="${f.text}"]`);
-            const val = input ? input.value : f.text;
+            const val = input ? input.value : '';
+            const placeholder = input ? (input.placeholder || f.text) : f.text;
             
-            el.innerText = val || ' '; // Keep space to render height
+            el.innerText = val || placeholder; // Show field placeholder when empty
             
             // Set styles
             el.className = isHighRes ? 'dynamic-field' : 'preview-field';
@@ -264,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Initial build (empty)
+    // Initial build (show field names as placeholders)
     buildFields(document.getElementById('preview-fields-container'), false);
 });
 </script>
