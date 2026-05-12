@@ -411,10 +411,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateElementStyles(el, fieldData) {
+        const scale = canvasBg.clientWidth / (canvasBg.naturalWidth || canvasBg.clientWidth || 1);
+        
         el.style.left = `${fieldData.x}%`;
         el.style.top = `${fieldData.y}%`;
         el.style.transform = `translate(-50%, -50%)`; // Center the anchor point
-        el.style.fontSize = `${fieldData.fontSize}px`;
+        el.style.fontSize = `${fieldData.fontSize * scale}px`;
         el.style.color = fieldData.color;
         el.style.fontFamily = fieldData.fontFamily || "'Cairo', sans-serif";
         el.style.textAlign = fieldData.align;
@@ -567,4 +569,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Refresh all fields on window resize (to handle max-width scaling)
+    window.addEventListener('resize', () => {
+        if (fields.length > 0) {
+            fields.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (el) updateElementStyles(el, f);
+            });
+        }
+    });
 });

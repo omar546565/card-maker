@@ -183,10 +183,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set backgrounds
     const previewBg = document.getElementById('preview-bg');
     const renderBg = document.getElementById('render-bg');
+    
+    previewBg.onload = () => {
+        document.getElementById('preview-wrapper').classList.remove('hidden');
+        buildFields(document.getElementById('preview-fields-container'), false);
+    };
+    
     previewBg.src = template.bg_image;
     renderBg.src = template.bg_image; // Same image for high res rendering
-
-    document.getElementById('preview-wrapper').classList.remove('hidden');
 
     // Generate Preview function
     function buildFields(container, isHighRes) {
@@ -216,8 +220,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (isHighRes) {
                 el.style.fontSize = `${f.fontSize}px`;
             } else {
-                // Approximate scaling for preview
-                el.style.fontSize = `calc(${f.fontSize}px * 0.4)`; // Assuming preview is ~40% of original
+                // Dynamic scaling for preview based on current display width vs natural width
+                const previewBg = document.getElementById('preview-bg');
+                const scale = previewBg.clientWidth / (previewBg.naturalWidth || previewBg.clientWidth || 1);
+                el.style.fontSize = `${f.fontSize * scale}px`;
             }
             
             container.appendChild(el);
@@ -289,8 +295,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Initial build (show field names as placeholders)
-    buildFields(document.getElementById('preview-fields-container'), false);
+    // Update preview on window resize (e.g. mobile rotation)
+    window.addEventListener('resize', () => {
+        if (!document.getElementById('preview-wrapper').classList.contains('hidden')) {
+            buildFields(document.getElementById('preview-fields-container'), false);
+        }
+    });
 });
 </script>
 </body>
