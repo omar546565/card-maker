@@ -81,7 +81,7 @@
 </div>
 
 <!-- Hidden container for High-Res Rendering -->
-<div id="result-container" style="position: absolute; left: -99999px; top: -99999px; visibility: visible;">
+<div id="result-container" style="position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -9999;">
     <div style="position: relative; display: inline-block;">
         <img id="render-bg" src="" style="display:block;" loading="eager">
         <div id="render-fields-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
@@ -204,11 +204,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const w = renderBg.naturalWidth;
             const h = renderBg.naturalHeight;
             
-            parentDiv.style.width = w + 'px';
-            parentDiv.style.height = h + 'px';
-            renderBg.style.width = w + 'px';
-            renderBg.style.height = h + 'px';
-            renderBg.style.maxWidth = 'none';
+            if (w > 0 && h > 0) {
+                parentDiv.style.width = w + 'px';
+                parentDiv.style.height = h + 'px';
+                renderBg.style.width = w + 'px';
+                renderBg.style.height = h + 'px';
+                renderBg.style.maxWidth = 'none';
+            }
         }
 
         const scale = isHighRes ? 1 : (previewBg.clientWidth / (previewBg.naturalWidth || previewBg.clientWidth || 1));
@@ -245,23 +247,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('generate-btn').innerText = 'جاري التوليد...';
         
         try {
+            // Target the INNER div which has the relative positioning and correct size
+            const captureTarget = document.querySelector('#result-container > div');
+            
             // Wait for images and fonts to settle in the DOM
-            const resultContainer = document.getElementById('result-container');
-            await new Promise(r => setTimeout(r, 500)); // 500ms delay for safety
+            await new Promise(r => setTimeout(r, 600)); 
             
             // Get the font CSS we injected earlier
             const fontStyleEl = document.getElementById('custom-fonts-style');
             const fontEmbedCss = fontStyleEl ? fontStyleEl.innerHTML : '';
 
-            // We use html-to-image on the hidden full-size container
-            const dataUrl = await htmlToImage.toPng(resultContainer, {
+            const dataUrl = await htmlToImage.toPng(captureTarget, {
                 quality: 1.0,
-                pixelRatio: 2, // High resolution export
-                fontEmbedCss: fontEmbedCss, // Force include our custom fonts CSS
-                filter: (node) => {
-                    // Skip external stylesheets that are NOT local to avoid CORS errors
-                    if (node.tagName === 'LINK' && node.rel === 'stylesheet' && !node.href.includes(window.location.host)) return false;
-                    return true;
+                pixelRatio: 1, // We already set the container to natural size, so 1 is enough (or 2 for ultra high res)
+                fontEmbedCss: fontEmbedCss,
+                style: {
+                    opacity: 1,
+                    visibility: 'visible'
                 }
             });
 
