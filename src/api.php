@@ -66,6 +66,7 @@ if ($action === 'upload_font') {
 }
 
 if ($action === 'list_fonts') {
+    ob_clean(); // Clear any potential warnings/whitespace
     $stmt = $pdo->query("SELECT * FROM fonts ORDER BY name ASC");
     $fonts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode(['success' => true, 'data' => $fonts]);

@@ -264,9 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial load
-    window.addEventListener('load', () => {
-        loadFonts();
-    });
+    loadFonts();
 
     // Upload Background
     bgUpload.addEventListener('change', async (e) => {
@@ -371,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transform = `translate(-50%, -50%)`; // Center the anchor point
         el.style.fontSize = `${fieldData.fontSize}px`;
         el.style.color = fieldData.color;
-        el.style.fontFamily = fieldData.fontFamily;
+        el.style.fontFamily = fieldData.fontFamily || "'Cairo', sans-serif";
         el.style.textAlign = fieldData.align;
         el.style.fontWeight = fieldData.weight;
     }
