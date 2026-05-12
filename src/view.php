@@ -81,7 +81,7 @@
 </div>
 
 <!-- Hidden container for High-Res Rendering -->
-<div id="result-container" style="position: fixed; left: 0; top: 0; z-index: -100;">
+<div id="result-container" style="position: absolute; left: -99999px; top: -99999px; visibility: visible;">
     <div style="position: relative; display: inline-block;">
         <img id="render-bg" src="" style="display:block;" loading="eager">
         <div id="render-fields-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
@@ -192,19 +192,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     previewBg.src = template.bg_image;
     renderBg.src = template.bg_image; // Same image for high res rendering
 
-    // Generate Preview function
     function buildFields(container, isHighRes) {
         container.innerHTML = '';
+        const previewBg = document.getElementById('preview-bg');
+        const renderBg = document.getElementById('render-bg');
+        
+        if (isHighRes) {
+            // CRITICAL: Ensure the high-res container is EXACTLY the size of the natural image
+            // This prevents browser viewport scaling from messing up the px-based font sizes
+            const parentDiv = renderBg.parentElement;
+            const w = renderBg.naturalWidth;
+            const h = renderBg.naturalHeight;
+            
+            parentDiv.style.width = w + 'px';
+            parentDiv.style.height = h + 'px';
+            renderBg.style.width = w + 'px';
+            renderBg.style.height = h + 'px';
+            renderBg.style.maxWidth = 'none';
+        }
+
+        const scale = isHighRes ? 1 : (previewBg.clientWidth / (previewBg.naturalWidth || previewBg.clientWidth || 1));
+
         fields.forEach(f => {
             const el = document.createElement('div');
-            // get value from input
             const input = document.querySelector(`input[data-var="${f.text}"]`);
             const val = input ? input.value : '';
             const placeholder = input ? (input.placeholder || f.text) : f.text;
             
-            el.innerText = val || placeholder; // Show field placeholder when empty
+            el.innerText = val || placeholder;
             
-            // Set styles
             el.className = isHighRes ? 'dynamic-field' : 'preview-field';
             el.style.left = `${f.x}%`;
             el.style.top = `${f.y}%`;
@@ -213,18 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.style.textAlign = f.align;
             el.style.fontWeight = f.weight;
             
-            // For preview, we scale font size down relative to preview container width
-            // This is complex, better approach: use 'vw' or percentages? 
-            // Standard approach: use px, but for preview we will just let it scale if we used % for font or we scale it dynamically
-            // For simplicity, we just use the raw fontSize for render, and a scaled down for preview.
-            if (isHighRes) {
-                el.style.fontSize = `${f.fontSize}px`;
-            } else {
-                // Dynamic scaling for preview based on current display width vs natural width
-                const previewBg = document.getElementById('preview-bg');
-                const scale = previewBg.clientWidth / (previewBg.naturalWidth || previewBg.clientWidth || 1);
-                el.style.fontSize = `${f.fontSize * scale}px`;
-            }
+            el.style.fontSize = `${f.fontSize * scale}px`;
             
             container.appendChild(el);
         });
