@@ -157,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     fieldsSection.classList.remove('hidden');
                     fieldsSection.classList.add('flex');
                     saveBtn.classList.remove('hidden');
+                    saveBtn.innerText = 'تعديل وحفظ ✏️';
                     
                     // Clear current fields
                     document.querySelectorAll('.draggable-text').forEach(el => el.remove());
@@ -334,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         fieldsSection?.classList.remove('hidden');
                         fieldsSection?.classList.add('flex');
                         saveBtn?.classList.remove('hidden');
+                        if (saveBtn) saveBtn.innerText = 'حفظ واستخراج الرابط';
                     };
                     canvasBg.src = currentImage;
                 }
