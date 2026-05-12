@@ -55,7 +55,7 @@ if (empty($_SESSION['authenticated'])) {
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
-        #canvas-wrapper { position: relative; display: inline-block; }
+        #canvas-wrapper { position: relative; display: inline-block;margin-top: 200px; }
         #canvas-bg { display: block; max-width: 100%; height: auto; }
         .draggable-text {
             position: absolute;
@@ -101,7 +101,7 @@ if (empty($_SESSION['authenticated'])) {
                 <select id="field-type" class="w-full border rounded p-2">
                     <option value="{{name}}">الاسم</option>
                     <option value="{{date}}">التاريخ</option>
-                    <option value="{{event_name}}">اللقب مثلا أخي الفاضل أختي الفاضلة</option>
+                    <option value="{{event_name}}">اللقب</option>
                     <option value="{{custom_text}}">اسم المدعو</option>
                 </select>
                 <button id="add-field-btn" class="bg-indigo-600 text-white py-2 rounded shadow hover:bg-indigo-700 transition">إضافة الحقل</button>

@@ -161,19 +161,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     variables.forEach(v => {
         let label = v.replace(/{{|}}/g, '');
+        let isDropdown = label === 'event_name';
+        
         // Translations
         if(label === 'name') label = 'الاسم';
         if(label === 'date') label = 'التاريخ';
-        if(label === 'event_name') label = 'اللقب مثلا أخي الفاضل أختي الفاضلة';
+        if(label === 'event_name') label = 'اللقب';
         if(label === 'custom_text') label = 'اسم المدعو';
         
         const wrapper = document.createElement('div');
-        wrapper.innerHTML = `
-            <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
-            <input type="text" data-var="${v}" placeholder="${label}..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
-        `;
-        // Live preview on every keystroke
-        const input = wrapper.querySelector('input');
+        if (isDropdown) {
+            wrapper.innerHTML = `
+                <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
+                <select data-var="${v}" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer" required>
+                    <option value="">اختر اللقب...</option>
+                    <option value="أخي الفاضل">أخي الفاضل</option>
+                    <option value="أختي الفاضلة">أختي الفاضلة</option>
+                </select>
+            `;
+        } else {
+            wrapper.innerHTML = `
+                <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
+                <input type="text" data-var="${v}" placeholder="${label}..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
+            `;
+        }
+
+        // Live preview on every change
+        const input = wrapper.querySelector('input, select');
         input.addEventListener('input', () => {
             buildFields(document.getElementById('preview-fields-container'), false);
         });
@@ -217,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         fields.forEach(f => {
             const el = document.createElement('div');
-            const input = document.querySelector(`input[data-var="${f.text}"]`);
+            const input = document.querySelector(`[data-var="${f.text}"]`);
             const val = input ? input.value : '';
             const placeholder = input ? (input.placeholder || f.text) : f.text;
             
