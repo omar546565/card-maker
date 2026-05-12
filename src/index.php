@@ -170,8 +170,8 @@ if (empty($_SESSION['authenticated'])) {
         </div>
 
         <div class="mt-auto border-t pt-4">
-            <label class="block text-sm font-semibold mb-2">اسم القالب</label>
-            <input type="text" id="template-name" placeholder="مثال: دعوة زفاف" class="w-full border rounded p-2 mb-4">
+            <label class="block text-sm font-semibold mb-2">اسم القالب <span class="text-red-500">*</span></label>
+            <input type="text" id="template-name" placeholder="مثال: دعوة زفاف" class="w-full border rounded p-2 mb-4" required>
             <button id="save-template-btn" class="w-full bg-green-600 text-white py-3 rounded-lg shadow-lg font-bold hover:bg-green-700 transition hidden">حفظ واستخراج الرابط</button>
         </div>
 

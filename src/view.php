@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const wrapper = document.createElement('div');
         if (isDropdown) {
             wrapper.innerHTML = `
-                <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">${label} <span class="text-red-500">*</span></label>
                 <select data-var="${v}" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer" required>
                     <option value="">اختر اللقب...</option>
                     <option value="أخي الفاضل">أخي الفاضل</option>
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         } else {
             wrapper.innerHTML = `
-                <label class="block text-sm font-semibold text-gray-700 mb-1">${label}</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">${label} <span class="text-red-500">*</span></label>
                 <input type="text" data-var="${v}" placeholder="${label}..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
             `;
         }
@@ -253,6 +253,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.getElementById('generate-btn').addEventListener('click', async () => {
+        // Validate form
+        if (!form.reportValidity()) {
+            return;
+        }
+
         // Build preview
         buildFields(document.getElementById('preview-fields-container'), false);
         
