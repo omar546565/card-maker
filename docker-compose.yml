@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "8989:80"
+      - "8981:80"
     volumes:
       - ./src:/var/www/html
     environment:
