@@ -109,6 +109,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const template = result.data;
     document.getElementById('title').innerText = template.name;
+
+    // Fetch and Load Fonts
+    async function loadCustomFonts() {
+        try {
+            const fontRes = await fetch('api.php?action=list_fonts');
+            const fontData = await fontRes.json();
+            if (fontData.success) {
+                const fontPromises = fontData.data.map(async (font) => {
+                    try {
+                        const f = new FontFace(font.name, `url(${font.file_path})`);
+                        const loadedFace = await f.load();
+                        document.fonts.add(loadedFace);
+                        
+                        // Also inject as style for fallback
+                        const style = document.createElement('style');
+                        style.innerHTML = `@font-face { font-family: '${font.name}'; src: url('${font.file_path}'); }`;
+                        document.head.appendChild(style);
+                    } catch (err) {
+                        console.error(`Error loading font ${font.name}:`, err);
+                    }
+                });
+                await Promise.all(fontPromises);
+                await document.fonts.ready;
+            }
+        } catch (e) {
+            console.error('Failed to load fonts', e);
+        }
+    }
+    await loadCustomFonts();
     
     // Set up form fields dynamically based on variables like {{name}}
     const form = document.getElementById('data-form');
@@ -157,6 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.style.left = `${f.x}%`;
             el.style.top = `${f.y}%`;
             el.style.color = f.color;
+            el.style.fontFamily = f.fontFamily || "'Cairo', sans-serif";
             el.style.textAlign = f.align;
             el.style.fontWeight = f.weight;
             
@@ -192,10 +222,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const dataUrl = await htmlToImage.toPng(resultContainer, {
                 quality: 1.0,
                 pixelRatio: 2, // High resolution export
-                skipFonts: true, // Skip cross-origin font CSS to avoid SecurityError
                 filter: (node) => {
-                    // Skip external stylesheets that cause CORS errors
-                    if (node.tagName === 'LINK' && node.rel === 'stylesheet') return false;
+                    // Skip external stylesheets that are NOT local to avoid CORS errors
+                    if (node.tagName === 'LINK' && node.rel === 'stylesheet' && !node.href.includes(window.location.host)) return false;
                     return true;
                 }
             });

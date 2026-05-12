@@ -94,8 +94,14 @@ if (empty($_SESSION['authenticated'])) {
             <input type="file" id="bg-upload" accept="image/png, image/jpeg" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
         </div>
 
+        <div>
+            <label class="block text-sm font-semibold mb-2">2. رفع خط مخصص (اختياري)</label>
+            <input type="file" id="font-upload" accept=".ttf,.otf,.woff,.woff2" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+            <p id="font-upload-status" class="text-xs mt-1"></p>
+        </div>
+
         <div id="fields-section" class="hidden flex-col gap-4 border-t pt-4">
-            <label class="block text-sm font-semibold">2. إضافة حقول (متغيرات)</label>
+            <label class="block text-sm font-semibold">3. إضافة حقول (متغيرات)</label>
             <select id="field-type" class="w-full border rounded p-2">
                 <option value="{{name}}">الاسم</option>
                 <option value="{{date}}">التاريخ</option>
@@ -114,6 +120,12 @@ if (empty($_SESSION['authenticated'])) {
             
             <label class="text-xs">لون الخط</label>
             <input type="color" id="ctrl-color" class="w-full h-10 p-1 border rounded">
+
+            <label class="text-xs">نوع الخط</label>
+            <select id="ctrl-font-family" class="w-full border rounded p-1">
+                <option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>
+                <!-- Uploaded fonts will be added here -->
+            </select>
 
             <label class="text-xs">المحاذاة</label>
             <div class="flex gap-2">

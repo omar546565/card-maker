@@ -7,12 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const controlsSection = document.getElementById('controls-section');
     const saveBtn = document.getElementById('save-template-btn');
     const addFieldBtn = document.getElementById('add-field-btn');
+    const fontUpload = document.getElementById('font-upload');
+    const fontUploadStatus = document.getElementById('font-upload-status');
+    const ctrlFontFamily = document.getElementById('ctrl-font-family');
     
     let currentImage = null;
     let fields = [];
     let activeFieldId = null;
     let fieldCounter = 0;
     let currentTemplateId = null;
+    let availableFonts = [];
 
     // Toast Notification
     function showToast(message, type = 'success') {
@@ -184,6 +188,84 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Font Management
+    async function loadFonts() {
+        try {
+            const res = await fetch('api.php?action=list_fonts');
+            const data = await res.json();
+            if (data.success) {
+                availableFonts = data.data;
+                updateFontDropdown();
+                availableFonts.forEach(font => {
+                    injectFontFace(font.name, font.file_path);
+                });
+            }
+        } catch (e) {
+            console.error('Failed to load fonts', e);
+        }
+    }
+
+    function updateFontDropdown() {
+        // Clear existing custom fonts, keep Cairo
+        ctrlFontFamily.innerHTML = `<option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>`;
+        availableFonts.forEach(font => {
+            const opt = document.createElement('option');
+            opt.value = `'${font.name}', sans-serif`;
+            opt.innerText = font.name;
+            ctrlFontFamily.appendChild(opt);
+        });
+    }
+
+    function injectFontFace(name, url) {
+        const id = 'font-face-' + name.replace(/\s+/g, '-');
+        if (document.getElementById(id)) return;
+        
+        const style = document.createElement('style');
+        style.id = id;
+        style.innerHTML = `
+            @font-face {
+                font-family: '${name}';
+                src: url('${url}');
+                font-display: swap;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    fontUpload.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        fontUploadStatus.innerText = 'جاري الرفع...';
+        fontUploadStatus.className = 'text-xs mt-1 text-indigo-600';
+
+        const formData = new FormData();
+        formData.append('font_file', file);
+        formData.append('action', 'upload_font');
+
+        try {
+            const res = await fetch('api.php', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                fontUploadStatus.innerText = 'تم رفع الخط بنجاح!';
+                fontUploadStatus.className = 'text-xs mt-1 text-green-600';
+                availableFonts.push(data.font);
+                updateFontDropdown();
+                injectFontFace(data.font.name, data.font.file_path);
+            } else {
+                fontUploadStatus.innerText = 'فشل الرفع: ' + data.message;
+                fontUploadStatus.className = 'text-xs mt-1 text-red-600';
+            }
+        } catch (e) {
+            fontUploadStatus.innerText = 'حدث خطأ أثناء الرفع';
+            fontUploadStatus.className = 'text-xs mt-1 text-red-600';
+        }
+    });
+
+    // Initial load
+    loadFonts();
+
     // Upload Background
     bgUpload.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -235,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             y: 50, // center %
             fontSize: 40, // px initially, but we can make it vw or just px relative to natural size
             color: '#000000',
+            fontFamily: "'Cairo', sans-serif",
             align: 'center',
             weight: '400'
         };
@@ -286,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transform = `translate(-50%, -50%)`; // Center the anchor point
         el.style.fontSize = `${fieldData.fontSize}px`;
         el.style.color = fieldData.color;
+        el.style.fontFamily = fieldData.fontFamily;
         el.style.textAlign = fieldData.align;
         el.style.fontWeight = fieldData.weight;
     }
@@ -309,6 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const fData = fields.find(f => f.id === id);
             document.getElementById('ctrl-size').value = fData.fontSize;
             document.getElementById('ctrl-color').value = fData.color;
+            document.getElementById('ctrl-font-family').value = fData.fontFamily || "'Cairo', sans-serif";
             document.getElementById('ctrl-weight').value = fData.weight;
         } else {
             controlsSection.classList.add('hidden');
@@ -328,6 +413,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activeFieldId) return;
         const fData = fields.find(f => f.id === activeFieldId);
         fData.color = e.target.value;
+        updateElementStyles(document.getElementById(activeFieldId), fData);
+    });
+
+    document.getElementById('ctrl-font-family').addEventListener('change', (e) => {
+        if (!activeFieldId) return;
+        const fData = fields.find(f => f.id === activeFieldId);
+        fData.fontFamily = e.target.value;
         updateElementStyles(document.getElementById(activeFieldId), fData);
     });
 

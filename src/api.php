@@ -26,6 +26,52 @@ if ($action === 'upload') {
     exit;
 }
 
+if ($action === 'upload_font') {
+    if (isset($_FILES['font_file']) && $_FILES['font_file']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . '/uploads/fonts/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        
+        $originalName = basename($_FILES['font_file']['name']);
+        $ext = pathinfo($originalName, PATHINFO_EXTENSION);
+        $allowed = ['ttf', 'otf', 'woff', 'woff2'];
+        
+        if (!in_array(strtolower($ext), $allowed)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid font format']);
+            exit;
+        }
+
+        $fontName = preg_replace('/[^A-Za-z0-9 ]/', '', pathinfo($originalName, PATHINFO_FILENAME));
+        if (empty(trim($fontName))) {
+            $fontName = 'CustomFont_' . substr(md5($originalName), 0, 5);
+        }
+        
+        $fileName = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '', $originalName);
+        if (empty(pathinfo($fileName, PATHINFO_FILENAME))) {
+            $fileName = time() . '_font.' . $ext;
+        }
+        
+        if (move_uploaded_file($_FILES['font_file']['tmp_name'], $uploadDir . $fileName)) {
+            $filePath = 'uploads/fonts/' . $fileName;
+            $stmt = $pdo->prepare("INSERT INTO fonts (name, file_path) VALUES (?, ?)");
+            $stmt->execute([$fontName, $filePath]);
+            
+            echo json_encode(['success' => true, 'font' => ['name' => $fontName, 'file_path' => $filePath]]);
+            exit;
+        }
+    }
+    echo json_encode(['success' => false, 'message' => 'Font upload failed']);
+    exit;
+}
+
+if ($action === 'list_fonts') {
+    $stmt = $pdo->query("SELECT * FROM fonts ORDER BY name ASC");
+    $fonts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode(['success' => true, 'data' => $fonts]);
+    exit;
+}
+
 if ($action === 'save_template') {
     $data = json_decode(file_get_contents('php://input'), true);
     

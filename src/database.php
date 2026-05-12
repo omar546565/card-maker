@@ -13,6 +13,13 @@ try {
         fields_json TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS fonts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        file_path TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
