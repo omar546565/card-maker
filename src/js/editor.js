@@ -159,6 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveBtn.classList.remove('hidden');
                     saveBtn.innerText = 'تعديل وحفظ ✏️';
                     
+                    // Switch to main tab to show Add Field section
+                    const mainTabBtn = document.querySelector('.sidebar-tab[data-tab="tab-main"]');
+                    if (mainTabBtn) mainTabBtn.click();
+                    
                     // Clear current fields
                     document.querySelectorAll('.draggable-text').forEach(el => el.remove());
                     fields = [];
