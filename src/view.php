@@ -134,6 +134,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 style.innerHTML = styleContent;
                 document.head.appendChild(style);
                 
+                // Force browser to render each font by adding hidden dummy elements
+                fontData.data.forEach(font => {
+                    const dummy = document.createElement('div');
+                    dummy.style.fontFamily = `'${font.name}'`;
+                    dummy.style.position = 'absolute';
+                    dummy.style.visibility = 'hidden';
+                    dummy.innerText = 'font-load-test';
+                    document.body.appendChild(dummy);
+                });
+                
                 await document.fonts.ready;
             }
         } catch (e) {
@@ -228,10 +238,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const resultContainer = document.getElementById('result-container');
             await new Promise(r => setTimeout(r, 500)); // 500ms delay for safety
             
+            // Get the font CSS we injected earlier
+            const fontStyleEl = document.getElementById('custom-fonts-style');
+            const fontEmbedCss = fontStyleEl ? fontStyleEl.innerHTML : '';
+
             // We use html-to-image on the hidden full-size container
             const dataUrl = await htmlToImage.toPng(resultContainer, {
                 quality: 1.0,
                 pixelRatio: 2, // High resolution export
+                fontEmbedCss: fontEmbedCss, // Force include our custom fonts CSS
                 filter: (node) => {
                     // Skip external stylesheets that are NOT local to avoid CORS errors
                     if (node.tagName === 'LINK' && node.rel === 'stylesheet' && !node.href.includes(window.location.host)) return false;
