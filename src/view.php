@@ -323,24 +323,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             const whatsappBtn = document.getElementById('whatsapp-btn');
             whatsappBtn.classList.remove('hidden');
             whatsappBtn.onclick = async () => {
-                const fbLink = "https://www.facebook.com/@ITKANDERNEGI"; // استبدل برابط الفيسبوك الخاص بك
-                const ytLink = "https://www.youtube.com/@ITKANDERNEGI";  // استبدل برابط اليوتيوب الخاص بك
-                const shareText = `تفضل، هذه بطاقتك!\n\nتابعنا على فيسبوك: ${fbLink}\nتابعنا على يوتيوب: ${ytLink}`;
+                const fbLink = "https://www.facebook.com/@ITKANDERNEGI";
+                const ytLink = "https://www.youtube.com/@ITKANDERNEGI";
+                const shareText = `اشترك لمتابعة البث المباشر!\n\n على فيسبوك: ${fbLink}\n على يوتيوب: ${ytLink}`;
 
+                // Check if Web Share API is supported and can share files
                 if (navigator.share) {
                     try {
-                        const blob = await (await fetch(dataUrl)).blob();
+                        const response = await fetch(dataUrl);
+                        const blob = await response.blob();
                         const file = new File([blob], 'card.png', { type: 'image/png' });
-                        await navigator.share({
-                            files: [file],
-                            title: 'بطاقتي',
-                            text: shareText
-                        });
+
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: 'بطاقتي',
+                                text: shareText
+                            });
+                        } else {
+                            // Fallback for browsers that support share but not files (like some desktop browsers)
+                            window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                            alert('عذراً، متصفحك لا يدعم مشاركة الصور مباشرة. تم إرسال النص فقط، يمكنك تحميل الصورة وإرسالها يدوياً.');
+                        }
                     } catch (e) {
+                        console.error('Share failed', e);
                         window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                     }
                 } else {
+                    // Fallback for desktop/unsupported browsers
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                    alert('للمشاركة مع الصورة، يرجى تحميل الصورة أولاً ثم إرسالها للواتساب.');
                 }
             };
         } catch (error) {
