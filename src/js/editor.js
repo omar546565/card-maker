@@ -1,15 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const bgUpload = document.getElementById('bg-upload');
-    const canvasWrapper = document.getElementById('canvas-wrapper');
-    const canvasBg = document.getElementById('canvas-bg');
-    const placeholderText = document.getElementById('placeholder-text');
-    const fieldsSection = document.getElementById('fields-section');
-    const controlsSection = document.getElementById('controls-section');
-    const saveBtn = document.getElementById('save-template-btn');
-    const addFieldBtn = document.getElementById('add-field-btn');
-    const fontUpload = document.getElementById('font-upload');
-    const fontUploadStatus = document.getElementById('font-upload-status');
-    const ctrlFontFamily = document.getElementById('ctrl-font-family');
+    // Utility to get element safely
+    const getEl = (id) => document.getElementById(id);
+
+    const bgUpload = getEl('bg-upload');
+    const canvasWrapper = getEl('canvas-wrapper');
+    const canvasBg = getEl('canvas-bg');
+    const placeholderText = getEl('placeholder-text');
+    const fieldsSection = getEl('fields-section');
+    const controlsSection = getEl('controls-section');
+    const saveBtn = getEl('save-template-btn');
+    const addFieldBtn = getEl('add-field-btn');
+    const fontUpload = getEl('font-upload');
+    const fontUploadStatus = getEl('font-upload-status');
+    const ctrlFontFamily = getEl('ctrl-font-family');
+    const savedTemplatesList = getEl('saved-templates-list');
     
     let currentImage = null;
     let fields = [];
