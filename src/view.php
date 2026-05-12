@@ -21,8 +21,8 @@
         }
         .dynamic-field {
             position: absolute;
-            white-space: nowrap;
             transform: translate(-50%, -50%);
+            word-wrap: break-word;
         }
         
         /* Preview container scales it down for viewing */
@@ -38,8 +38,8 @@
         #preview-wrapper img.bg { width: 100%; display: block; }
         .preview-field {
             position: absolute;
-            white-space: nowrap;
             transform: translate(-50%, -50%);
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.style.fontWeight = f.weight;
             
             el.style.fontSize = `${f.fontSize * scale}px`;
+            el.style.width = `${f.width || 100}%`;
             
             container.appendChild(el);
         });

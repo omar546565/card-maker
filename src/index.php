@@ -62,9 +62,9 @@ if (empty($_SESSION['authenticated'])) {
             cursor: move;
             border: 2px dashed transparent;
             padding: 5px;
-            white-space: nowrap;
             touch-action: none;
             transform-origin: center center;
+            word-wrap: break-word;
         }
         .draggable-text:hover, .draggable-text.active {
             border-color: #3b82f6;
@@ -140,6 +140,9 @@ if (empty($_SESSION['authenticated'])) {
             
             <label class="text-xs">حجم الخط</label>
             <input type="range" id="ctrl-size" min="10" max="150" class="w-full">
+
+            <label class="text-xs">عرض منطقة النص (%)</label>
+            <input type="range" id="ctrl-width" min="5" max="100" class="w-full">
             
             <label class="text-xs">لون الخط</label>
             <input type="color" id="ctrl-color" class="w-full h-10 p-1 border rounded">

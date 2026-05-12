@@ -363,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
             x: 50, // center %
             y: 50, // center %
             fontSize: 40, // px initially, but we can make it vw or just px relative to natural size
+            width: 100, // default 100%
             color: '#000000',
             fontFamily: "'Cairo', sans-serif",
             align: 'center',
@@ -417,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.top = `${fieldData.y}%`;
         el.style.transform = `translate(-50%, -50%)`; // Center the anchor point
         el.style.fontSize = `${fieldData.fontSize * scale}px`;
+        el.style.width = `${fieldData.width || 100}%`;
         el.style.color = fieldData.color;
         el.style.fontFamily = fieldData.fontFamily || "'Cairo', sans-serif";
         el.style.textAlign = fieldData.align;
@@ -441,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const fData = fields.find(f => f.id === id);
             document.getElementById('ctrl-size').value = fData.fontSize;
+            document.getElementById('ctrl-width').value = fData.width || 100;
             document.getElementById('ctrl-color').value = fData.color;
             document.getElementById('ctrl-font-family').value = fData.fontFamily || "'Cairo', sans-serif";
             document.getElementById('ctrl-weight').value = fData.weight;
@@ -457,6 +460,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!activeFieldId) return;
             const fData = fields.find(f => f.id === activeFieldId);
             fData.fontSize = e.target.value;
+            updateElementStyles(document.getElementById(activeFieldId), fData);
+        });
+    }
+
+    const ctrlWidth = document.getElementById('ctrl-width');
+    if (ctrlWidth) {
+        ctrlWidth.addEventListener('input', (e) => {
+            if (!activeFieldId) return;
+            const fData = fields.find(f => f.id === activeFieldId);
+            fData.width = e.target.value;
             updateElementStyles(document.getElementById(activeFieldId), fData);
         });
     }
