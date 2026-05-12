@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إنشاء البطاقة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Inline font import to avoid CORS issues with html-to-image */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
@@ -57,6 +60,12 @@
 
         <button id="generate-btn" class="mt-4 bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition">إنشاء البطاقة (معاينة)</button>
         <button id="download-btn" class="hidden bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-green-700 transition">تحميل الصورة (PNG)</button>
+        
+        <!-- Success message after download -->
+        <div id="download-success-msg" class="hidden flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-semibold" style="direction:rtl; opacity:0; transition: opacity 0.4s ease;">
+            <span style="font-size:20px">✅</span>
+            <span>تم تحميل الصورة في الاستديو!</span>
+        </div>
     </div>
 
     <!-- Preview Side -->
@@ -182,7 +191,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             // We use html-to-image on the hidden full-size container
             const dataUrl = await htmlToImage.toPng(resultContainer, {
                 quality: 1.0,
-                pixelRatio: 2 // High resolution export
+                pixelRatio: 2, // High resolution export
+                skipFonts: true, // Skip cross-origin font CSS to avoid SecurityError
+                filter: (node) => {
+                    // Skip external stylesheets that cause CORS errors
+                    if (node.tagName === 'LINK' && node.rel === 'stylesheet') return false;
+                    return true;
+                }
             });
 
             // Show final image
@@ -199,6 +214,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 a.href = dataUrl;
                 a.download = `card_${Date.now()}.png`;
                 a.click();
+
+                // Show success message below button
+                const msg = document.getElementById('download-success-msg');
+                msg.classList.remove('hidden');
+                void msg.offsetHeight; // force reflow
+                msg.style.opacity = '1';
+
+                // Hide after 4s
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.classList.add('hidden'), 400);
+                }, 4000);
             };
         } catch (error) {
             console.error('Error generating image:', error);

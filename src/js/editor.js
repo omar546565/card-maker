@@ -14,6 +14,57 @@ document.addEventListener('DOMContentLoaded', () => {
     let fieldCounter = 0;
     let currentTemplateId = null;
 
+    // Toast Notification
+    function showToast(message, type = 'success') {
+        // Remove existing toast
+        const existing = document.getElementById('toast-notification');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.innerHTML = `<span style="font-size:20px">${type === 'success' ? '✅' : '❌'}</span> ${message}`;
+
+        // Set initial (hidden) position — no transition yet
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: ${type === 'error' ? '#7f1d1d' : '#1e1e2e'};
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-right: 4px solid ${type === 'error' ? '#ef4444' : '#22c55e'};
+            opacity: 0;
+            direction: rtl;
+            pointer-events: none;
+            transition: none;
+        `;
+        document.body.appendChild(toast);
+
+        // Force browser to paint the hidden state first, then animate
+        void toast.offsetHeight;
+
+        toast.style.transition = 'transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+
+        // Auto dismiss after 3s
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(120px)';
+            toast.style.opacity = '0';
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 500);
+        }, 3000);
+    }
+
     // Saved Templates
     const toggleSavedBtn = document.getElementById('toggle-saved-btn');
     const savedTemplatesList = document.getElementById('saved-templates-list');
@@ -155,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fields = [];
             fieldCounter = 0;
             
-            canvasBg.src = currentImage;
+            // Set onload BEFORE src to avoid missing the event
             canvasBg.onload = () => {
                 placeholderText.classList.add('hidden');
                 canvasWrapper.classList.remove('hidden');
@@ -163,6 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 fieldsSection.classList.add('flex');
                 saveBtn.classList.remove('hidden');
             };
+            canvasBg.src = currentImage;
+
+            // Show toast immediately after successful upload (guaranteed)
+            showToast('✅ تم الحفظ في الاستديو');
         } else {
             alert('فشل رفع الصورة');
         }
