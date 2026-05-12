@@ -433,33 +433,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Controls
-    document.getElementById('ctrl-size').addEventListener('input', (e) => {
-        if (!activeFieldId) return;
-        const fData = fields.find(f => f.id === activeFieldId);
-        fData.fontSize = e.target.value;
-        updateElementStyles(document.getElementById(activeFieldId), fData);
-    });
+    const ctrlSize = document.getElementById('ctrl-size');
+    if (ctrlSize) {
+        ctrlSize.addEventListener('input', (e) => {
+            if (!activeFieldId) return;
+            const fData = fields.find(f => f.id === activeFieldId);
+            fData.fontSize = e.target.value;
+            updateElementStyles(document.getElementById(activeFieldId), fData);
+        });
+    }
 
-    document.getElementById('ctrl-color').addEventListener('input', (e) => {
-        if (!activeFieldId) return;
-        const fData = fields.find(f => f.id === activeFieldId);
-        fData.color = e.target.value;
-        updateElementStyles(document.getElementById(activeFieldId), fData);
-    });
+    const ctrlColor = document.getElementById('ctrl-color');
+    if (ctrlColor) {
+        ctrlColor.addEventListener('input', (e) => {
+            if (!activeFieldId) return;
+            const fData = fields.find(f => f.id === activeFieldId);
+            fData.color = e.target.value;
+            updateElementStyles(document.getElementById(activeFieldId), fData);
+        });
+    }
 
-    document.getElementById('ctrl-font-family').addEventListener('change', (e) => {
-        if (!activeFieldId) return;
-        const fData = fields.find(f => f.id === activeFieldId);
-        fData.fontFamily = e.target.value;
-        updateElementStyles(document.getElementById(activeFieldId), fData);
-    });
+    if (ctrlFontFamily) {
+        ctrlFontFamily.addEventListener('change', (e) => {
+            if (!activeFieldId) return;
+            const fData = fields.find(f => f.id === activeFieldId);
+            fData.fontFamily = e.target.value;
+            updateElementStyles(document.getElementById(activeFieldId), fData);
+        });
+    }
 
-    document.getElementById('ctrl-weight').addEventListener('change', (e) => {
-        if (!activeFieldId) return;
-        const fData = fields.find(f => f.id === activeFieldId);
-        fData.weight = e.target.value;
-        updateElementStyles(document.getElementById(activeFieldId), fData);
-    });
+    const ctrlWeight = document.getElementById('ctrl-weight');
+    if (ctrlWeight) {
+        ctrlWeight.addEventListener('change', (e) => {
+            if (!activeFieldId) return;
+            const fData = fields.find(f => f.id === activeFieldId);
+            fData.weight = e.target.value;
+            updateElementStyles(document.getElementById(activeFieldId), fData);
+        });
+    }
 
     document.querySelectorAll('.ctrl-align').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -470,12 +481,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.getElementById('delete-field-btn').addEventListener('click', () => {
-        if (!activeFieldId) return;
-        fields = fields.filter(f => f.id !== activeFieldId);
-        document.getElementById(activeFieldId).remove();
-        selectField(null);
-    });
+    const deleteFieldBtn = document.getElementById('delete-field-btn');
+    if (deleteFieldBtn) {
+        deleteFieldBtn.addEventListener('click', () => {
+            if (!activeFieldId) return;
+            fields = fields.filter(f => f.id !== activeFieldId);
+            document.getElementById(activeFieldId).remove();
+            selectField(null);
+        });
+    }
 
     // Save Template
     saveBtn.addEventListener('click', async () => {
