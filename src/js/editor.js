@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Saved Templates
-    const toggleSavedBtn = document.getElementById('toggle-saved-btn');
     const savedTemplatesList = document.getElementById('saved-templates-list');
 
     async function loadSavedTemplates() {
@@ -177,15 +176,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    toggleSavedBtn.addEventListener('click', () => {
-        if (savedTemplatesList.classList.contains('hidden')) {
-            savedTemplatesList.classList.remove('hidden');
-            savedTemplatesList.classList.add('flex');
-            loadSavedTemplates();
-        } else {
-            savedTemplatesList.classList.add('hidden');
-            savedTemplatesList.classList.remove('flex');
-        }
+    // Sidebar Tabs Logic
+    document.querySelectorAll('.sidebar-tab').forEach(tabBtn => {
+        tabBtn.addEventListener('click', () => {
+            const tabId = tabBtn.dataset.tab;
+            
+            // Update buttons
+            document.querySelectorAll('.sidebar-tab').forEach(b => {
+                b.classList.remove('border-indigo-600', 'text-indigo-600');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+            tabBtn.classList.add('border-indigo-600', 'text-indigo-600');
+            tabBtn.classList.remove('border-transparent', 'text-gray-500');
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            if (tabId === 'tab-saved') loadSavedTemplates();
+            if (tabId === 'tab-fonts') loadFonts();
+        });
     });
 
     // Font Management
@@ -208,11 +218,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateFontDropdown() {
         // Clear existing custom fonts, keep Cairo
         ctrlFontFamily.innerHTML = `<option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>`;
+        
+        const fontsPreview = document.getElementById('fonts-list-preview');
+        if (fontsPreview) fontsPreview.innerHTML = '';
+
+        if (availableFonts.length === 0 && fontsPreview) {
+            fontsPreview.innerHTML = '<p class="text-xs text-gray-400 text-center">لا توجد خطوط مرفوعة</p>';
+        }
+
         availableFonts.forEach(font => {
+            // Dropdown option
             const opt = document.createElement('option');
             opt.value = `'${font.name}', sans-serif`;
             opt.innerText = font.name;
             ctrlFontFamily.appendChild(opt);
+
+            // Preview list
+            if (fontsPreview) {
+                const item = document.createElement('div');
+                item.className = 'p-2 bg-gray-50 border rounded text-sm flex justify-between items-center';
+                item.style.fontFamily = `'${font.name}', sans-serif`;
+                item.innerHTML = `
+                    <span>${font.name}</span>
+                    <span class="text-[10px] text-gray-400">نموذج الخط</span>
+                `;
+                fontsPreview.appendChild(item);
+            }
         });
     }
 
