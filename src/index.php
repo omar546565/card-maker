@@ -101,7 +101,7 @@ if (empty($_SESSION['authenticated'])) {
                 <select id="field-type" class="w-full border rounded p-2">
                     <option value="{{name}}">الاسم</option>
                     <option value="{{date}}">التاريخ</option>
-                    <option value="{{event_name}}">اللقب مثلا أخي الفاصل أختي الفاضلة</option>
+                    <option value="{{event_name}}">اللقب مثلا أخي الفاضل أختي الفاضلة</option>
                     <option value="{{custom_text}}">اسم المدعو</option>
                 </select>
                 <button id="add-field-btn" class="bg-indigo-600 text-white py-2 rounded shadow hover:bg-indigo-700 transition">إضافة الحقل</button>
