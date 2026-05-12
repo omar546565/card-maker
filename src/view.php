@@ -59,7 +59,11 @@
         </form>
 
         <button id="generate-btn" class="mt-4 bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition">إنشاء البطاقة (معاينة)</button>
-        <button id="download-btn" class="hidden bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-green-700 transition">تحميل الصورة (PNG)</button>
+        <button id="download-btn" class="hidden bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition">تحميل الصورة (PNG)</button>
+        <button id="whatsapp-btn" class="hidden bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-2">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dz6l"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>مشاركة عبر واتساب</span>
+        </button>
         
         <!-- Success message after download -->
         <div id="download-success-msg" class="hidden flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-semibold" style="direction:rtl; opacity:0; transition: opacity 0.4s ease;">
@@ -313,6 +317,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                     msg.style.opacity = '0';
                     setTimeout(() => msg.classList.add('hidden'), 400);
                 }, 4000);
+            };
+
+            // Setup WhatsApp Share
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            whatsappBtn.classList.remove('hidden');
+            whatsappBtn.onclick = async () => {
+                const fbLink = "https://www.facebook.com/@ITKANDERNEGI"; // استبدل برابط الفيسبوك الخاص بك
+                const ytLink = "https://www.youtube.com/@ITKANDERNEGI";  // استبدل برابط اليوتيوب الخاص بك
+                const shareText = `تفضل، هذه بطاقتك!\n\nتابعنا على فيسبوك: ${fbLink}\nتابعنا على يوتيوب: ${ytLink}`;
+
+                if (navigator.share) {
+                    try {
+                        const blob = await (await fetch(dataUrl)).blob();
+                        const file = new File([blob], 'card.png', { type: 'image/png' });
+                        await navigator.share({
+                            files: [file],
+                            title: 'بطاقتي',
+                            text: shareText
+                        });
+                    } catch (e) {
+                        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                    }
+                } else {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                }
             };
         } catch (error) {
             console.error('Error generating image:', error);
