@@ -14,4 +14,4 @@ WORKDIR /var/www/html
 
 # We will mount the src directory via docker-compose, but we need to ensure permissions
 # This command runs when container starts to ensure mounted volumes have right permissions
-CMD chown -R www-data:www-data /var/www/html/uploads /var/www/html/db && apache2-foreground
+CMD mkdir -p /var/www/html/uploads/fonts /var/www/html/db && chown -R www-data:www-data /var/www/html/uploads /var/www/html/db && apache2-foreground
