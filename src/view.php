@@ -177,24 +177,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isDropdown) {
             wrapper.innerHTML = `
                 <label class="block text-sm font-semibold text-gray-700 mb-1">${label} <span class="text-red-500">*</span></label>
-                <select data-var="${v}" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer" required>
+                <select class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer mb-2" required>
                     <option value="">اختر اللقب...</option>
                     <option value="أخي الفاضل">أخي الفاضل</option>
                     <option value="أختي الفاضلة">أختي الفاضلة</option>
+                    <option value="other">أخرى...</option>
                 </select>
+                <input type="text" data-var="${v}" class="hidden w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="اكتب اللقب المناسب...">
             `;
+
+            const select = wrapper.querySelector('select');
+            const otherInput = wrapper.querySelector('input');
+
+            select.addEventListener('change', () => {
+                if (select.value === 'other') {
+                    otherInput.classList.remove('hidden');
+                    otherInput.required = true;
+                    otherInput.value = '';
+                    otherInput.focus();
+                } else {
+                    otherInput.classList.add('hidden');
+                    otherInput.required = false;
+                    otherInput.value = select.value;
+                }
+                buildFields(document.getElementById('preview-fields-container'), false);
+            });
+
+            otherInput.addEventListener('input', () => {
+                buildFields(document.getElementById('preview-fields-container'), false);
+            });
         } else {
             wrapper.innerHTML = `
                 <label class="block text-sm font-semibold text-gray-700 mb-1">${label} <span class="text-red-500">*</span></label>
                 <input type="text" data-var="${v}" placeholder="${label}..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" required>
             `;
+            
+            const input = wrapper.querySelector('input');
+            input.addEventListener('input', () => {
+                buildFields(document.getElementById('preview-fields-container'), false);
+            });
         }
 
-        // Live preview on every change
-        const input = wrapper.querySelector('input, select');
-        input.addEventListener('input', () => {
-            buildFields(document.getElementById('preview-fields-container'), false);
-        });
         form.appendChild(wrapper);
     });
 
